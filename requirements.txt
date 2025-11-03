@@ -1,0 +1,43 @@
+# Faz 3 (v2 Planı): Proje bağımlılıkları
+# 'pip install -r requirements.txt' komutuyla kurulur.
+
+# Web Arayüzü
+streamlit
+
+# RAG & LLM
+langchain
+langchain-google-genai
+chromadb
+
+# PDF İşleme
+pymupdf
+ocrmypdf
+
+# Asenkron Görev Kuyruğu (Üretim Seviyesi)
+celery
+redis
+
+# Re-ranking (Doğruluk - sentence-transformers daha esnek ve güçlüdür)
+sentence-transformers
+numpy # sentence-transformers için gerekebilir
+
+# Test & Kalite
+pytest
+pytest-cov
+
+# Yardımcılar
+python-dotenv
+pandas # Değerlendirme betiği için
+
+# 1. Kapsamlı RAG Değerlendirme (Madde 1)
+ragas
+deepeval
+
+# 2. Deney Takibi (Madde 4)
+mlflow
+
+# 3. Hiperparametre Optimizasyonu (Madde 3)
+optuna
+
+# 4. Veri Kalitesi Kontrolü (Madde 5)
+langdetect

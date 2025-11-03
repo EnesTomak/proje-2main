@@ -1,0 +1,82 @@
+# Faz 13 (v2.5 Hibrit Planı): 3 servisi (web, worker, redis) yönetir.
+# ANCAK, 'web' ve 'worker' servisleri, MLOps (Tier 1) deneylerini
+# kalıcı 'mlflow/' volume'üne kaydetmek için yapılandırılmıştır.
+version: "3.8"
+
+services:
+  # 1. Redis: Celery için görev aracısı (broker)
+  redis:
+    image: redis:7-alpine
+    container_name: 2main-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: always
+
+  # 2. Web Arayüzü: Streamlit
+  web:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: 2main-web
+    command: streamlit run src/services/app.py --server.port=8501 --server.address=0.0.0.0
+    ports:
+      - "8501:8501"
+    environment:
+      # Çekirdek Yapılandırma
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY} 
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - DB_PERSIST_DIR=/app/chroma_db_local # Container içi yol
+      # YENİ (Faz 13 - Hibrit): MLflow deneylerinin (RAGAS vb.)
+      # 'mlflow' volume'üne (dosya sistemi olarak) kaydedilmesi için URI.
+      - MLFLOW_TRACKING_URI=file:///app/mlflow/mlflow-db
+    volumes:
+      - ./src:/app/src # Kod değişikliklerinin anında yansıması için (hot-reload)
+      # Kalıcı depolama alanlarını bağlama
+      - ./pending_files:/app/pending_files
+      - ./processed_files:/app/processed_files
+      - ./failed_files:/app/failed_files
+      - ./chroma_db_local:/app/chroma_db_local
+      - ./mlflow:/app/mlflow # YENİ: MLflow deney kayıtları (Tier 1 Kanıt)
+    depends_on:
+      - redis
+    restart: on-failure
+
+  # 3. Arka Plan Çalışanı: Celery
+  worker:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: 2main-worker
+    command: celery -A src.services.tasks.celery worker --loglevel=info --concurrency=2
+    environment:
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - DB_PERSIST_DIR=/app/chroma_db_local
+      - MLFLOW_TRACKING_URI=file:///app/mlflow/mlflow-db # YENİ (Tier 1 Kanıt)
+    volumes:
+      - ./src:/app/src
+      - ./pending_files:/app/pending_files
+      - ./processed_files:/app/processed_files
+      - ./failed_files:/app/failed_files
+      - ./chroma_db_local:/app/chroma_db_local
+      - ./mlflow:/app/mlflow # YENİ (Tier 1 Kanıt)
+    depends_on:
+      - redis
+    restart: always
+
+# Kalıcı depolama alanları (MLflow eklendi)
+# Tuana sadece 'web', 'worker', 'redis' çalıştıracak,
+# ama biz 'evaluate.py' betiğini çalıştırdığımızda
+# sonuçlar 'mlflow' volume'üne kaydedilecek.
+volumes:
+  redis_data:
+  chroma_db_local:
+  pending_files:
+  processed_files:
+  failed_files:
+  mlflow: # YENİ (Tier 1 Kanıt)
+

@@ -1,0 +1,76 @@
+# ===========================================
+# GIT DOSYALARI
+# ===========================================
+.git/
+.gitignore
+
+# ===========================================
+# DOCKER DOSYALARI
+# ===========================================
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# ===========================================
+# HASSAS YAPILANDIRMA DOSYALARI
+# ===========================================
+.env
+*.env.local
+
+# ===========================================
+# PYTHON SANAL ORTAMLARI
+# ===========================================
+.venv/
+venv/
+env/
+
+# ===========================================
+# PYTHON CACHE DOSYALARI
+# ===========================================
+__pycache__/
+*.py[cod]
+*$py.class
+
+# ===========================================
+# TEST VE CI/CD DOSYALARI
+# ===========================================
+.pytest_cache/
+coverage.xml
+tests/
+Jenkinsfile
+LICENSE
+
+# ===========================================
+# VERİ VE NOTEBOOKLAR
+# Bu dosyalar build sırasında değil, runtime'da volume ile bağlanmalıdır.
+# ===========================================
+data/
+notebooks/
+scripts/
+
+# ===========================================
+# KALICI DEPOLAMA ALANLARI (ÇOK ÖNEMLİ)
+# Bu klasörler imajın içine eklenmemelidir.
+# ===========================================
+chroma_db_local/
+pending_files/
+processed_files/
+failed_files/
+
+# ===========================================
+# IDE VE İŞLETİM SİSTEMİ DOSYALARI
+# ===========================================
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# ===========================================
+# ÇIKTI DOSYALARI
+# ===========================================
+eval_results.csv
+*.log
+
+mlflow/

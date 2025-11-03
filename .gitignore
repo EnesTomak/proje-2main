@@ -1,0 +1,39 @@
+# Faz 3 (v2 Planı): Git'in hangi dosyaları görmezden geleceğini belirler.
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+env/
+
+# Hassas Yapılandırma Dosyası
+.env
+*.env
+
+# Docker
+docker-compose.yml.bak
+
+# Kalıcı Veritabanı ve Dosya Kuyrukları
+# Bu dosyalar repo'ya yüklenmemeli, 'volume' ile yönetilmeli.
+chroma_db_local/
+pending_files/
+processed_files/
+failed_files/
+*.log
+
+# IDE / İşletim Sistemi
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Test ve Raporlama Çıktıları
+.pytest_cache/
+coverage.xml
+pytest-results.xml
+eval_results.csv
+
+mlflow/
